@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { InvoiceContext } from "../context/InvoiceContext";
 
 function CreateInvoice() {
     const [items, setItems] = useState([
@@ -12,8 +13,9 @@ function CreateInvoice() {
         ]);
     };
 
-    const handleChange = (index, field, value)
-    => {
+    const { addInvoice } = useContext(InvoiceContext);
+
+    const handleChange = (index, field, value) => {
         const newItems = [...items];
         newItems[index] [field] = value;
         setItems(newItems);
@@ -23,6 +25,18 @@ function CreateInvoice() {
         (acc, item) => acc + item.quantity * item.price,
         0
     );
+
+    const handleSubmit =() => {
+        const newInvoice = {
+            id: Date.now(),
+            items,
+            total,
+            status: "pending",
+        };
+        addInvoice(newInvoice);
+
+        alert("Invoice Saved!");
+    };
 
     return (
         <div className="p-6 max-w-3xl mx-auto">
@@ -76,6 +90,12 @@ function CreateInvoice() {
             <h2 className="text-2xl font-bold mt-6">
                 Total: ${total}
             </h2>
+
+            <button
+            onClick={handleSubmit}
+            className="bg-green-500 text-white px-4 py-2 rounded mt-4">
+                Save Invooice
+            </button>
         </div>
     );
 }
