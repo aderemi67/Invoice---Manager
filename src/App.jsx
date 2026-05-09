@@ -1,11 +1,14 @@
-import './index.css'
+import { fromJSON } from "postcss";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CreateInvoice from "./pages/CreateInvoice";
+
 function App() {
   return (
-    <div className="p-5">
-      <h1 className=" text-white
-       bg-black min-h-screen flex items-center
-       justify-center">Invoice Manager </h1>
-      </div>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<CreateInvoice />} />
+    </Routes>
+    </BrowserRouter>
   );
 }
 
