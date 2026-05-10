@@ -6,8 +6,10 @@ function App() {
   return (
     <BrowserRouter>
     <Routes>
+      
       <Route path="/" element={<Home />} />
       <Route path="/create" element={<CreateInvoice />} />
+      <Route path="/edit/:id" element={<CreateInvoice />} />
     </Routes>
     </BrowserRouter>
   );

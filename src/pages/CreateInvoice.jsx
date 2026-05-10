@@ -1,10 +1,32 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { InvoiceContext } from "../context/InvoiceContext";
+import { useNavigate, useParams, } from "react-router-dom";
+
 
 function CreateInvoice() {
     const [items, setItems] = useState([
         {name: "", quantity: 1, price: 0 },
     ]);
+
+    const { invoices, addInvoice, updateInvoice } =
+     useContext(InvoiceContext);
+
+     const navigate = useNavigate();
+     const { id } = useParams();
+
+
+    useEffect(() => {
+        if (id) {
+            const existingInvoice = invoices.find(
+                (invoice) => invoice.id === Number(id)
+            );
+
+            if (existingInvoice) {
+                setItems(existingInvoice.items);
+            }
+        }
+    }, [id, invoices]);
+
 
     const addItem = () => {
         setItems([
@@ -13,8 +35,8 @@ function CreateInvoice() {
         ]);
     };
 
-    const { addInvoice } = useContext(InvoiceContext);
-
+    
+    
     const handleChange = (index, field, value) => {
         const newItems = [...items];
         newItems[index] [field] = value;
@@ -27,15 +49,22 @@ function CreateInvoice() {
     );
 
     const handleSubmit =() => {
-        const newInvoice = {
-            id: Date.now(),
+        const invoiceData = {
+            id: id ? Number(id) : Date.now(),
             items,
             total,
             status: "pending",
         };
-        addInvoice(newInvoice);
 
-        alert("Invoice Saved!");
+        if (id) {
+            updateInvoice(invoiceData);
+            alert("Invoice Updated!");
+        } else {
+            addInvoice(invoiceData);
+            alert("Invoice Saved!");
+        }
+
+        navigate("/");
     };
 
     return (

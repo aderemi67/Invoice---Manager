@@ -36,6 +36,12 @@ function InvoiceProvider({ children }) {
         {...invoice, status: "paid" } : invoice)
         );
     };
+    const updateInvoice = (updatedInvoice) => {
+        setInvoices(
+            invoices.map((invoices) =>
+            invoice.id === updatedInvoice.id ? updatedInvoice : invoice)
+        );
+    };
 
     return (
         <InvoiceContext.Provider
@@ -44,6 +50,7 @@ function InvoiceProvider({ children }) {
             addInvoice,
             deleteInvoice,
             markAsPaid,
+            updateInvoice,
         }}
         >
             {children}
