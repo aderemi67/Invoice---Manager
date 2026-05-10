@@ -96,6 +96,13 @@ function Home() {
                                 </button>
 
                                 <Link
+                                to={`/invoice/${invoice.id}`}
+                                className="bg-blue-500 text-white px-3 py-1 rounded"
+                                >
+                                    View
+                                </Link>
+
+                                <Link
                                 to={`/edit/${invoice.id}`}
                                 className="bg-yellow-500 text-white px-3 py-1 rounded"
                                 >
