@@ -1,12 +1,40 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
 export const InvoiceContext =createContext();
 
 function InvoiceProvider({ children }) {
-    const [invoices, setInvoices] = useState([]);
+    const [invoices, setInvoices] = useState(() =>
+        
+    {
+        try {
+        const savedInvoices = localStorage.getItem("invoices");
 
-    const addInvoice = (invoice) => {
+        return savedInvoices ?
+         JSON.parse(savedInvoices) : [];
+        } catch (error) {
+            return [];
+        }
+    });
+
+    useEffect(() => {
+        localStorage.setItem("invoices", JSON.stringify(invoices));
+    }, [invoices]);
+
+    const addInvoice = (invoice) =>  {
         setInvoices([...invoices, invoice]);
+    };
+
+    const deleteInvoice = (id) => {
+        setInvoices(
+            invoices.filter((invoice) => invoice.id !== id)
+        );
+    };
+
+    const markAsPaid = (id) => {
+        setInvoices(
+            invoices.map((invoice) => invoice.id === id ?
+        {...invoice, status: "paid" } : invoice)
+        );
     };
 
     return (
@@ -14,11 +42,15 @@ function InvoiceProvider({ children }) {
         value={{
             invoices,
             addInvoice,
+            deleteInvoice,
+            markAsPaid,
         }}
         >
             {children}
         </InvoiceContext.Provider>
     );
+
+    
 }
 
 export default InvoiceProvider;

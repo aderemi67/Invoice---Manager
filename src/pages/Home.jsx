@@ -1,12 +1,24 @@
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
 
 function Home() {
-    const { invoices } = useContext(InvoiceContext);
+    const { invoices,
+        deleteInvoice,
+        markAsPaid,
+     } = useContext(InvoiceContext);
 
     return (
-        <div className="p-6">
+        <div className="p-6 max-w-4xl mx-auto">
+             <div className="flex justify-between items-center mb-6"> 
             <h1 className="text-3xl font-bold mb-6"> All Invoices</h1>
+
+        <Link
+        to="/create"
+        className="bg-blue-500 text-white px-4 py-2 rounded">
+            Create Invoice
+        </Link>
+        </div>
 
             {invoices.length === 0 ? (
                 <p>No Invoices yet</p>
@@ -16,14 +28,34 @@ function Home() {
                     key={invoice.id}
                     className="border p-4 rounded mb-4">
                         <h2 className="font-bold">
-                            Invoice ID: {invoice.id}
+                            Invoice #{invoice.id}
                             </h2> 
                             <p>Total: ${invoice.total}</p>
-                            <p>Status: {invoice.status}</p>
+                            <p
+                            className={`font-semibold ${invoice.status === "paid" ? "text-green-500" : "text-red-500"}`}
+                            >
+                            {invoice.status}
+                            </p>
+
+                            <div className="flex gap-3 mt-4">
+                                <button
+                                onClick={() => markAsPaid(invoice.id)}
+                                className="bg-green-500 text-white px-3 py-1 rounded">
+                                    Mark Paid
+                                </button>
+
+                                <button
+                                onClick={() => deleteInvoice(invoice.id)}
+                                className="bg-red-500 text-white px-3 py-1 rounded"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                             </div>
                 ))
             )}
-        </div>
+        
+    </div>
     );
 }
 
