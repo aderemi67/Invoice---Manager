@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
 import DashboardStats from "../components/DashboardStats";
@@ -8,6 +8,23 @@ function Home() {
         deleteInvoice,
         markAsPaid,
      } = useContext(InvoiceContext);
+
+     const [search, setSearch] = useState("");
+     const [filterStatus, setFilterStatus] = useState("all");
+
+
+     const filteredInvoices = invoices.filter(
+        (invoice) => {
+            const matchesSearch = invoice.id
+            .toString()
+            .includes(search);
+
+            const matchesStatus = filterStatus === "all"
+            ? true : invoice.status === filterStatus;
+
+            return matchesSearch && matchesStatus;
+        }
+     );
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
@@ -23,10 +40,34 @@ function Home() {
 
         <DashboardStats />
 
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <input
+            type="text"
+            placeholder="Search by invoice ID..."
+            value={search}
+            onChange={(e) => 
+                setSearch(e.target.value)
+            }
+            className="border p-2 rounded w-full"
+            />
+
+            <select
+            value={filterStatus}
+            onChange={(e) => 
+                setFilterStatus(e.target.value)
+            }
+            className="border p-2 rounded"
+            >
+                <option value="all">All</option>
+                <option value="paid">Paid</option>
+                <option value="pending">Pending</option>
+            </select>
+        </div>
+
             {invoices.length === 0 ? (
                 <p>No Invoices yet</p>
             ): (
-                invoices.map((invoice) => (
+                filteredInvoices.map((invoice) => (
                     <div
                     key={invoice.id}
                     className="border p-4 rounded mb-4">
