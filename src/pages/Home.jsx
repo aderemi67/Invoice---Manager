@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
 import DashboardStats from "../components/DashboardStats";
 import RevenueChart from "../components/RevenueCharts";
+import ThemeToggle from "../components/ThemeToggle";
 
 function Home() {
     const { invoices,
@@ -28,10 +29,12 @@ function Home() {
      );
 
     return (
-        <div className="p-6 max-w-4xl mx-auto">
+        <div className="p-6 max-w-4xl mx-auto
+         min-h-screen bg-white dark:bg-gray-900
+          text-black dark:text-white">
              <div className="flex justify-between items-center mb-6"> 
             <h1 className="text-3xl font-bold mb-6"> All Invoices</h1>
-
+        <ThemeToggle />
         <Link
         to="/create"
         className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -58,7 +61,7 @@ function Home() {
             onChange={(e) => 
                 setFilterStatus(e.target.value)
             }
-            className="border p-2 rounded"
+            className="border text-blue-800 p-2 rounded"
             >
                 <option value="all">All</option>
                 <option value="paid">Paid</option>
@@ -72,7 +75,8 @@ function Home() {
                 filteredInvoices.map((invoice) => (
                     <div
                     key={invoice.id}
-                    className="border p-4 rounded mb-4">
+                    className="border p-4 rounded mb-4 shadow
+                    bg-white dark:bg-gray-800">
                         <h2 className="font-bold">
                             Invoice #{invoice.id}
                             </h2> 
