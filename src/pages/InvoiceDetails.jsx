@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
+import generatePDF from "../utils/generatePDF";
+
 
 function InvoiceDetails() {
     const { id } = useParams();
@@ -23,17 +25,25 @@ function InvoiceDetails() {
 
     return (
         <div className="max-w-4xl mx-auto p-6">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex gap-4 items-center mb-6">
                 <h1 className="text-3xl font-bold">
                     Invoice Details
                 </h1>
 
-                <Link
-                to="/"
-                className="bg-gray-800 text-white px-4 py-2 rounded"
-                >
-                    Back
-                </Link>
+                <div className="space-x-4">
+                    <Link
+                        to="/"
+                        className="bg-gray-800 text-white px-4 py-2 rounded"
+                    >
+                        Back
+                    </Link>
+                    <button
+                        onClick={() => generatePDF(invoice)}
+                        className="bg-green-600 text-white px-4 py-2 rounded"
+                    >
+                        Download PDF
+                    </button>
+                </div>
             </div>
 
             <div className="border rounded p-6 shadow">
