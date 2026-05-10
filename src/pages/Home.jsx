@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
+import DashboardStats from "../components/DashboardStats";
 
 function Home() {
     const { invoices,
@@ -19,6 +20,8 @@ function Home() {
             Create Invoice
         </Link>
         </div>
+
+        <DashboardStats />
 
             {invoices.length === 0 ? (
                 <p>No Invoices yet</p>
