@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
 import DashboardStats from "../components/DashboardStats";
+import RevenueChart from "../components/RevenueCharts";
 
 function Home() {
     const { invoices,
@@ -39,6 +40,7 @@ function Home() {
         </div>
 
         <DashboardStats />
+        <RevenueChart />
 
         <div className="flex flex-col md:flex-row gap-4 mb-6">
             <input
