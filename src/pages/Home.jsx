@@ -1,9 +1,12 @@
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { InvoiceContext } from "../context/InvoiceContext";
 import DashboardStats from "../components/DashboardStats";
 import RevenueChart from "../components/RevenueCharts";
 import ThemeToggle from "../components/ThemeToggle";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import DashboardLayout from "../Layouts/DashboardLayout";
 
 function Home() {
     const { invoices,
@@ -11,9 +14,11 @@ function Home() {
         markAsPaid,
      } = useContext(InvoiceContext);
 
+     const navigate = useNavigate(); 
      const [search, setSearch] = useState("");
      const [filterStatus, setFilterStatus] = useState("all");
 
+     const { logout } = useContext(AuthContext);
 
      const filteredInvoices = invoices.filter(
         (invoice) => {
@@ -28,13 +33,33 @@ function Home() {
         }
      );
 
+     const isOverdue = (dueDate) => {
+        if (!dueDate) return false;
+
+        return (
+            new Date(dueDate) < new Date()
+        );
+     };
+
     return (
-        <div className="p-6 max-w-4xl mx-auto
-         min-h-screen bg-white dark:bg-gray-900
-          text-black dark:text-white">
+        <DashboardLayout>
+        <div className="md:hidden bg-gray-900 p-6 max-w-4xl mx-auto
+         min-h-screen text-white dark:bg-gray-900
+        mb-6 dark:text-white">
              <div className="flex justify-between items-center mb-6"> 
-            <h1 className="text-3xl font-bold mb-6"> All Invoices</h1>
+            <h1 className="text-3xl font-bold mb-6"> InvoicePro</h1>
+
         <ThemeToggle />
+
+        <button
+        onClick={() => {
+            logout();
+            navigate("/login");
+        }}
+        className="bg-red-600 text-white px-4 py-2 rounded">
+            Logout
+        </button>
+
         <Link
         to="/create"
         className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -69,6 +94,32 @@ function Home() {
             </select>
         </div>
 
+        <div 
+        className="bg-yellow-100 border
+        border-yellow-400 text-yellow-800 p-4
+        rounded mb-6">
+            <h2 className="font-bold mb-2">
+                Payment Reminders
+            </h2>
+
+            {invoices.filter(
+                (invoice) => invoice.status !=="paid" &&
+                isOverdue(invoice.dueDate)
+            ).length === 0 ? (
+                <p>No overdue invoices</p>
+            ) : (
+                invoices.filter(
+                    (invoice) =>
+                        invoice.status !== "paid" &&
+                    isOverdue(invoice.dueDate)
+                ).map((invoice) => (
+                    <p key={invoice.id}>
+                        Invoice #{invoice.id}is overdue.
+                    </p>
+                ))
+            )}
+        </div>
+
             {invoices.length === 0 ? (
                 <p>No Invoices yet</p>
             ): (
@@ -81,21 +132,51 @@ function Home() {
                             Invoice #{invoice.id}
                             </h2> 
                             <p>Total: ${invoice.total}</p>
+                            
+                                <p>
+                                    Due:  
+                                    {invoice.dueDate || " No due date"}
+                                </p>
+
                             <p
                             className={`font-semibold ${invoice.status === "paid" ? "text-green-500" : "text-red-500"}`}
                             >
                             {invoice.status}
                             </p>
 
+                            {invoice.status !== "paid" && isOverdue(invoice.dueDate) && (
+                                <span
+                                className="
+                                inline-block
+                                mt-2 ml-2 bg-red text-white px-3 py-1 rounded text-sm">
+                                    Overdue
+                                </span>
+                            )}
+
                             <div className="flex gap-3 mt-4">
                                 <button
-                                onClick={() => markAsPaid(invoice.id)}
+                                onClick={() => {
+
+                                 markAsPaid(invoice.id)
+                                    toast.success(
+                                        "Invoice Marked As Paid"
+                                    );
+                                }
+                                }
+
                                 className="bg-green-500 text-white px-3 py-1 rounded">
                                     Mark Paid
                                 </button>
 
                                 <button
-                                onClick={() => deleteInvoice(invoice.id)}
+                                onClick={() => {
+                                    deleteInvoice(invoice.id)
+                                    toast.error(
+                                        "Invoice Deleted"
+                                    );
+                                }
+                                    
+                                }
                                 className="bg-red-500 text-white px-3 py-1 rounded"
                                 >
                                     Delete
@@ -114,12 +195,14 @@ function Home() {
                                 >
                                 Edit
                                 </Link>
+
                             </div>
                             </div>
                 ))
             )}
         
     </div>
+    </DashboardLayout>
     );
 }
 

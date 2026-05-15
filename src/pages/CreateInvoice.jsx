@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { InvoiceContext } from "../context/InvoiceContext";
 import { useNavigate, useParams, } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 function CreateInvoice() {
@@ -14,6 +15,8 @@ function CreateInvoice() {
      const navigate = useNavigate();
      const { id } = useParams();
 
+     const [dueDate, setDueDate] = useState("");
+
 
     useEffect(() => {
         if (id) {
@@ -24,7 +27,9 @@ function CreateInvoice() {
             if (existingInvoice) {
                 setItems(existingInvoice.items);
             }
+            setDueDate(existingInvoice.dueDate || "");
         }
+        
     }, [id, invoices]);
 
 
@@ -58,10 +63,10 @@ function CreateInvoice() {
 
         if (id) {
             updateInvoice(invoiceData);
-            alert("Invoice Updated!");
+            toast.success("Invoice Updated!");
         } else {
             addInvoice(invoiceData);
-            alert("Invoice Saved!");
+            toast.success("Invoice Saved!");
         }
 
         navigate("/");
@@ -119,6 +124,18 @@ function CreateInvoice() {
             <h2 className="text-2xl font-bold mt-6">
                 Total: ${total}
             </h2>
+
+            <div className="mb-4">
+                <label className="block mb-2 font-semibold">
+                    Due Date
+                </label>
+
+                <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="border p-2 rounded w-full"/>
+            </div>
 
             <button
             onClick={handleSubmit}
